@@ -1,12 +1,10 @@
 import { useState } from 'react';
-const { Configuration, OpenAIApi } = require("openai");
+import OpenAI from "openai";
 
 
-const configuration = new Configuration({
-  apiKey: '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',
+const openai = new OpenAI({
+  apiKey: 'asegurate de tener creditos', dangerouslyAllowBrowser: true
 });
-const openai = new OpenAIApi(configuration);
-
 
 function App() {
   const [messages, setMessages] = useState([
@@ -36,13 +34,16 @@ function App() {
     setIsTyping(true);
     e.target.reset();
 
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [...newMessages],
+    }).then((response) => {
+      console.log(response)
+      setMessages([...newMessages, response.choices[0].message])
+      setIsTyping(false)
     });
 
-    setMessages([...newMessages, completion.data.choices[0].message]);
-    setIsTyping(false);
+
   }
 
   return (
