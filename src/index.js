@@ -1,14 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from './pages/layout//index';
+import Home from './pages/home/Home';
 import './index.css';
+import { ThemeProvider } from "@material-tailwind/react";
+
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+    <ThemeProvider>
+      <Routes>
+
+        <Route element={<Layout />}>
+          <Route path="/*" element={<Home />} />
+        </Route>
+      </Routes>
+    </ThemeProvider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
