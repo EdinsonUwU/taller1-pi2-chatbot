@@ -3,31 +3,38 @@ import OpenAI from "openai";
 
 
 const openai = new OpenAI({
-  apiKey: 'asegurate de tener creditos', dangerouslyAllowBrowser: true
+  apiKey: 'xispas', dangerouslyAllowBrowser: true
 });
 
 function App() {
   const [messages, setMessages] = useState([
     {
-      content: "Hola! Sobre que quieres estudiar hoy?",
+      content: "Hola! ¿Sobre qué quieres estudiar hoy?",
       role: "assistant"
     },
-    {
-      content: "Dame ideas",
-      role: "user"
-    }
   ]);
 
   const [isTyping, setIsTyping] = useState(false);
-
+  const [step, setStep] = useState(1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newMessage = {
-      content: e.target[0].value,
-      role: "user"
+    const userResponse = e.target[0].value;
+    let content;
+
+    if (step === 1) {
+      content = `${userResponse}<div style="display: none;">De ahora en adelante vamos a estudiar lo que te dije de forma que harás una pregunta respecto al tema que te dije con 4 opciones de respuesta ENUMERADAS (no de a,b,c,d SOLAMENTE 1,2,3 y 4) donde cada opción enumerada empiece con un <br/>, por ejemplo: "*pregunta*, escoja la opción correcta: <br/>1. Opción1<br/>2. Opción2<br/>3. Opción3. Cuando te responda, en caso de que haya acertado, me felicitas y complementas la respuesta, si no acerté, justificas porqué la respuesta que escogí es incorrecta y me animas a seguir. Al final me haces una nueva pregunta de opción multiple tal cual como la anterior pero a partir de ahora la pregunta inicia con un <br/> (esto es solo para aplicar un salto de linea entre el feedback de la respuesta de la pregunta anterior con la pregunta nueva)`;
+      setStep(2);}
+    else {
+      // Handle other cases if needed
+      content = userResponse;
     }
+
+    const newMessage = {
+      content: content,
+      role: "user"
+    };
 
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
@@ -38,13 +45,11 @@ function App() {
       model: "gpt-3.5-turbo",
       messages: [...newMessages],
     }).then((response) => {
-      console.log(response)
-      setMessages([...newMessages, response.choices[0].message])
-      setIsTyping(false)
+      const updatedMessages = [...newMessages, response.choices[0].message];
+      setMessages(updatedMessages);
+      setIsTyping(false);
     });
-
-
-  }
+  };
 
   return (
     <section className='container bg-white mx-auto p-5 mt-12 xl:px-64 fixed inset-0'>
@@ -59,7 +64,9 @@ function App() {
                       <img src={msg.role === 'assistant' ? '/images/ai-bot.jpg' : '/images/person.png'} />
                     </div>
                   </div>
-                  <div className="chat-bubble bg-blue-200">{msg.content}</div>
+                  <div className="chat-bubble bg-blue-200">
+                    <div dangerouslySetInnerHTML={{ __html: msg.content }}></div>
+                  </div>
                 </div>
               )
             })
