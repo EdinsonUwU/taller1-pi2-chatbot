@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import OpenAI from "openai";
 
-
 const openai = new OpenAI({
   apiKey: 'xispas', dangerouslyAllowBrowser: true
 });
@@ -40,6 +39,7 @@ function App() {
     setMessages(newMessages);
     setIsTyping(true);
     e.target.reset();
+    console.log(newMessages)
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
