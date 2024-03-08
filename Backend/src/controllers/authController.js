@@ -57,11 +57,6 @@ async function loginUser(req, res) {
 		// Realizar la consulta para obtener todos los datos del usuario en la base de datos
 		const userData = await getUserByEmail(email);
 
-		// Verificar si el usuario no esta desactivado
-		if (userData.status != "active") {
-			throw new Error("Credenciales de inicio de sesión inválidas");
-		}
-
 		// Verificar el hash de la contraseña
 		const passwordHash = userData.password;
 
@@ -74,11 +69,10 @@ async function loginUser(req, res) {
 		}
 
 		const user = {
-			user_id: userData.user_id,
+			id: userData.id,
 			email: userData.email,
 		};
 
-		console.log("user", user, "userData", userData);
 		// Generar token JWT con el user_id email y nickname del usuario
 		const token = jwt.sign(user, secretKey);
 
@@ -144,12 +138,12 @@ async function loginGoogleUser(req, res) {
 async function registerUser(req, res) {
 	try {
 		//Datos de registro del usuario recibidos
-		const { name, last_name, email, password } = req.body;
+		const { name, email, password } = req.body;
 
 		// Generar el hash de la contraseña
 		const hashedPassword = await bcrypt.hash(password, 10); // 10 es el número de rondas de hashing
 
-		const data = await insertUser(name, last_name, email, hashedPassword);
+		const data = await insertUser(name, email, hashedPassword);
 
 		//Respuesta
 		res.json("OK");
