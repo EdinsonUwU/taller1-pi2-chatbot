@@ -2,7 +2,7 @@ import { useState } from "react";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-	apiKey: "mikey",
+	apiKey: "xispas",
 	dangerouslyAllowBrowser: true,
 });
 
@@ -40,6 +40,7 @@ function App() {
 		setMessages(newMessages);
 		setIsTyping(true);
 		e.target.reset();
+		console.log(newMessages);
 
 		const completion = await openai.chat.completions
 			.create({
