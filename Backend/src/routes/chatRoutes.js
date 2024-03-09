@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { saveChat, getChat} = require("../controllers/chatController");
+const { saaveChat, getChaat} = require("../controllers/chatController");
 
-router.post("/saveChat", saveChat);
-router.get("getChat/:user_id",getChat);
+router.post("/saaveChat",saaveChat);
+router.get("getChaat/:user_id",getChaat);
+
+module.exports = router;
