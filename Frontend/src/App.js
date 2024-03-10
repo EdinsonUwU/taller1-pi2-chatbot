@@ -26,18 +26,11 @@ function App() {
 						setMessages(data.data);
 						console.log(data.data);
 					}
-					else {
-						setMessages([
-							{
-								content: "Hola! ¿Sobre qué quieres estudiar hoy?",
-								role: "assistant",
-							},
-						]);
-					}
 				})
 				.catch((error) => console.error('Error al obtener historial de chat:', error));
-		} else {
-			// Si no está logeado, comienza el chat como de costumbre
+		}
+
+		if (messages.length === 0) {
 			setMessages([
 				{
 					content: "Hola! ¿Sobre qué quieres estudiar hoy?",
@@ -45,6 +38,7 @@ function App() {
 				},
 			]);
 		}
+
 	}, []);
 
 	const handleSubmit = async (e) => {
@@ -81,32 +75,30 @@ function App() {
 				const updatedMessages = [...newMessages, response.choices[0].message];
 				setMessages(updatedMessages);
 				setIsTyping(false);
-			});
+				const userId = localStorage.getItem('id');
 
+				if (userId) {
+					try {
+						// Enviar el nuevo mensaje al backend para actualizar la base de datos
+						const response = fetch(`http://localhost:9000/savechat`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								user_id: userId,
+								conversation: updatedMessages, // Envía toda la conversación actualizada
+							}),
+						});
 
-		const userId = localStorage.getItem('id');
-
-		if (userId) {
-			try {
-				// Enviar el nuevo mensaje al backend para actualizar la base de datos
-				const response = await fetch(`http://localhost:9000/savechat`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						user_id: userId,
-						conversation: messages, // Envía toda la conversación actualizada
-					}),
-				});
-
-				if (!response.ok) {
-					console.error('Error al guardar el mensaje en la base de datos:', response.statusText);
+						if (!response.ok) {
+							console.error('Error al guardar el mensaje en la base de datos:', response.statusText);
+						}
+					} catch (error) {
+						console.error('Error al enviar el mensaje al backend:', error);
+					}
 				}
-			} catch (error) {
-				console.error('Error al enviar el mensaje al backend:', error);
-			}
-		}
+			});
 	};
 
 	return (
