@@ -1,7 +1,7 @@
 
 const { supabase } = require("../configs/databaseConfig");
 
-async function saveChat(req, res) {
+async function saaveChat(req, res) {
 	try {
 		const { user_id, conversation } = req.body;
 
@@ -25,7 +25,7 @@ async function saveChat(req, res) {
 	}
 }
 
-async function getChat(req, res) {
+async function getChaat(req, res) {
 	try {
 		const { user_id } = req.params;
 
@@ -49,6 +49,6 @@ async function getChat(req, res) {
 }
 
 module.exports = {
-    saveChat,
-    getChat
+    saaveChat,
+    getChaat
 };

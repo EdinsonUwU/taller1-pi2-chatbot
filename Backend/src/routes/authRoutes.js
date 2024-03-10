@@ -11,7 +11,9 @@ const {
 	getCodeByEmail,
 	lockoutUser,
 	changeUserPassword,
-	newUserPassword
+	newUserPassword,
+	saveChat,
+	getChat
 } = require("../controllers/authController");
 
 router.post("/login", loginUser);
@@ -25,6 +27,7 @@ router.get("/user/code/:email", getCodeByEmail);
 router.put("/user/lockout", lockoutUser);
 router.post("/user/change/password", changeUserPassword);
 router.post("/user/newpassword", newUserPassword);
-
+router.post("/savechat", saveChat);
+router.get("/getchat/:user_id", getChat)
 
 module.exports = router;
