@@ -1,21 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import OpenAI from "openai";
 
+
 const openai = new OpenAI({
-	apiKey: "xispas",
+	apiKey: "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",
 	dangerouslyAllowBrowser: true,
 });
 
 function App() {
-	const [messages, setMessages] = useState([
-		{
-			content: "Hola! ¿Sobre qué quieres estudiar hoy?",
-			role: "assistant",
-		},
-	]);
+	const [messages, setMessages] = useState([]);
 
 	const [isTyping, setIsTyping] = useState(false);
 	const [step, setStep] = useState(1);
+
+	useEffect(() => {
+		// Verifica si el usuario está logeado
+		const userId = localStorage.getItem('id');
+
+		if (userId) {
+			// Si está logeado, obtén el historial de chat
+			fetch(`http://localhost:9000/getchat/${userId}`)
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.success) {
+						setMessages(data.data);
+						console.log(data.data);
+					}
+					else {
+						setMessages([
+							{
+								content: "Hola! ¿Sobre qué quieres estudiar hoy?",
+								role: "assistant",
+							},
+						]);
+					}
+				})
+				.catch((error) => console.error('Error al obtener historial de chat:', error));
+		} else {
+			// Si no está logeado, comienza el chat como de costumbre
+			setMessages([
+				{
+					content: "Hola! ¿Sobre qué quieres estudiar hoy?",
+					role: "assistant",
+				},
+			]);
+		}
+	}, []);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -52,6 +82,31 @@ function App() {
 				setMessages(updatedMessages);
 				setIsTyping(false);
 			});
+
+
+		const userId = localStorage.getItem('id');
+
+		if (userId) {
+			try {
+				// Enviar el nuevo mensaje al backend para actualizar la base de datos
+				const response = await fetch(`http://localhost:9000/savechat`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						user_id: userId,
+						conversation: messages, // Envía toda la conversación actualizada
+					}),
+				});
+
+				if (!response.ok) {
+					console.error('Error al guardar el mensaje en la base de datos:', response.statusText);
+				}
+			} catch (error) {
+				console.error('Error al enviar el mensaje al backend:', error);
+			}
+		}
 	};
 
 	return (
