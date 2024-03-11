@@ -62,7 +62,7 @@ export default function StickyNavbar() {
 						</PopoverHandler>
 
 						{name ? (
-							<PopoverContent className="w-72">
+							<PopoverContent className="w-72 border">
 								<List className="p-0">
 									{/* NAME */}
 									<a
