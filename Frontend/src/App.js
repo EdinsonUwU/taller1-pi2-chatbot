@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import OpenAI from "openai";
 
-
 const openai = new OpenAI({
-	apiKey: "xispas",
+	apiKey: process.env.REACT_APP_GPT_KEY,
 	dangerouslyAllowBrowser: true,
 });
 
@@ -15,11 +14,10 @@ function App() {
 
 	useEffect(() => {
 		// Verifica si el usuario está logeado
-		const userId = localStorage.getItem('id');
-
+		const userId = localStorage.getItem("id");
 		if (userId) {
 			// Si está logeado, obtén el historial de chat
-			fetch(`http://localhost:9000/getchat/${userId}`)
+			fetch(`http://studia-ia.vercel.app/getchat/${userId}`)
 				.then((response) => response.json())
 				.then((data) => {
 					if (data.success) {
@@ -27,7 +25,7 @@ function App() {
 						console.log(data.data);
 					}
 				})
-				.catch((error) => console.error('Error al obtener historial de chat:', error));
+				.catch((error) => console.error("Error al obtener historial de chat:", error));
 		}
 
 		if (messages.length === 0) {
@@ -38,7 +36,6 @@ function App() {
 				},
 			]);
 		}
-
 	}, []);
 
 	const handleSubmit = async (e) => {
@@ -75,15 +72,15 @@ function App() {
 				const updatedMessages = [...newMessages, response.choices[0].message];
 				setMessages(updatedMessages);
 				setIsTyping(false);
-				const userId = localStorage.getItem('id');
+				const userId = localStorage.getItem("id");
 
 				if (userId) {
 					try {
 						// Enviar el nuevo mensaje al backend para actualizar la base de datos
 						const response = fetch(`http://localhost:9000/savechat`, {
-							method: 'POST',
+							method: "POST",
 							headers: {
-								'Content-Type': 'application/json',
+								"Content-Type": "application/json",
 							},
 							body: JSON.stringify({
 								user_id: userId,
@@ -92,10 +89,13 @@ function App() {
 						});
 
 						if (!response.ok) {
-							console.error('Error al guardar el mensaje en la base de datos:', response.statusText);
+							console.error(
+								"Error al guardar el mensaje en la base de datos:",
+								response.statusText
+							);
 						}
 					} catch (error) {
-						console.error('Error al enviar el mensaje al backend:', error);
+						console.error("Error al enviar el mensaje al backend:", error);
 					}
 				}
 			});
