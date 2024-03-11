@@ -77,7 +77,7 @@ function App() {
 				if (userId) {
 					try {
 						// Enviar el nuevo mensaje al backend para actualizar la base de datos
-						const response = fetch(`http://localhost:9000/savechat`, {
+						const response = fetch(`http://studia-backend.vercel.app/savechat`, {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
