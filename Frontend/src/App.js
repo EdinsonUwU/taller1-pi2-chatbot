@@ -17,7 +17,7 @@ function App() {
 		const userId = localStorage.getItem("id");
 		if (userId) {
 			// Si está logeado, obtén el historial de chat
-			fetch(`http://studia-ia.vercel.app/getchat/${userId}`)
+			fetch(`http://studia-backend.vercel.app/getchat/${userId}`)
 				.then((response) => response.json())
 				.then((data) => {
 					if (data.success) {
